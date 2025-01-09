@@ -42,7 +42,7 @@
     "test:watch": "vitest",
     "types:check": "npx tsc --noEmit",
     "prepublishOnly": "npm run ci",
-    "prepare": "husky"
+    "prepare": "husky && npx changeset init"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.2",
