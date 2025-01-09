@@ -1,6 +1,6 @@
 {
   "name": "rx-dispatcher",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Small Redux-like action dispatcher with RxJs",
   "main": "dist/index.js",
   "files": [
