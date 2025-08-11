@@ -1,5 +1,5 @@
 import { tap } from 'rxjs';
-import { beforeEach, describe, expect, it, type MockInstance, vitest } from 'vitest';
+import { describe, expect, it, vitest } from 'vitest';
 
 import { takeValues } from '../utils/takeValues';
 import { createActionDispatcher } from './dispatcher';
@@ -14,15 +14,16 @@ describe('dispatcher', () => {
         two: string
     };
 
-    let consoleDebugSpy: MockInstance;
-
-    beforeEach(() => {
+    const setup = () => {
         vitest.clearAllMocks();
 
-        consoleDebugSpy = vitest.spyOn(global.console, 'debug').mockImplementation(() => ({}));
-    });
+        return {
+            consoleDebugSpy: vitest.spyOn(global.console, 'debug').mockImplementation(() => ({}))
+        };
+    };
 
     it('should only emit a certain event', () => {
+        const { consoleDebugSpy } = setup();
         const dispatcher = createActionDispatcher<ActionEventsMap>();
         const obs = dispatcher.observe('one').pipe(tap(console.debug));
 
@@ -36,6 +37,7 @@ describe('dispatcher', () => {
     });
 
     it('should emit all events', async () => {
+        const { consoleDebugSpy } = setup();
         const dispatcher = createActionDispatcher<ActionEventsMap>();
         const obs = dispatcher.source.pipe(tap(console.debug));
 
