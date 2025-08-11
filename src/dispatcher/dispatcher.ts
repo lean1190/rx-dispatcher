@@ -9,10 +9,11 @@ import { ofType } from '../utils/ofType';
  */
 export function createActionDispatcher<EventMap extends ActionEventMapBase>(): ActionDispatcher<EventMap> {
     const source = new ReplaySubject<ActionUnion<EventMap>>();
+    const source$ = source.asObservable();
 
     return {
-        source: source.asObservable(),
+        source: source$,
         dispatch: (event) => source.next(event),
-        observe: (type) => source.pipe(ofType(type))
+        observe: (type) => source$.pipe(ofType(type))
     };
 }
