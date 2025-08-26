@@ -16,35 +16,38 @@ describe('dispatcher', () => {
 
     const setup = () => {
         vitest.clearAllMocks();
+        const dispatcher = createActionDispatcher<ActionEventsMap>();
 
         return {
-            consoleDebugSpy: vitest.spyOn(global.console, 'debug').mockImplementation(() => ({}))
+            dispatcher,
+            consoleDebugSpy: vitest.spyOn(global.console, 'debug').mockImplementation(() => undefined)
         };
     };
 
-    it('should only emit a certain event', () => {
-        const { consoleDebugSpy } = setup();
-        const dispatcher = createActionDispatcher<ActionEventsMap>();
+    it('should only emit a certain event', async () => {
+        const { consoleDebugSpy, dispatcher } = setup();
         const obs = dispatcher.observe('one').pipe(tap(console.debug));
 
+        const subscription = takeValues(obs);
         dispatcher.dispatch({ type: 'one' });
         dispatcher.dispatch({ type: 'two' });
 
-        obs.subscribe((emission) => {
-            expect(emission).toStrictEqual({ type: 'one' });
-            expect(consoleDebugSpy).toHaveBeenCalledOnce();
-        });
+        const [emission] = await subscription;
+
+        expect(emission).toStrictEqual({ type: 'one' });
+        expect(consoleDebugSpy).toHaveBeenCalledOnce();
     });
 
     it('should emit all events', async () => {
-        const { consoleDebugSpy } = setup();
-        const dispatcher = createActionDispatcher<ActionEventsMap>();
+        const { consoleDebugSpy, dispatcher } = setup();
         const obs = dispatcher.source.pipe(tap(console.debug));
+
+        const subscription = takeValues(obs, 2);
 
         dispatcher.dispatch({ type: 'one' });
         dispatcher.dispatch({ type: 'two' });
 
-        const [emission1, emission2] = await takeValues(obs, 2);
+        const [emission1, emission2] = await subscription;
 
         expect(emission1).toStrictEqual({ type: 'one' });
         expect(emission2).toStrictEqual({ type: 'two' });

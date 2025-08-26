@@ -1,4 +1,4 @@
-import { ReplaySubject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import type { ActionDispatcher, ActionEventMapBase, ActionUnion } from '../types/types';
 import { ofType } from '../utils/ofType';
@@ -8,7 +8,7 @@ import { ofType } from '../utils/ofType';
  * @returns {ActionDispatcher<EventMap>}
  */
 export function createActionDispatcher<EventMap extends ActionEventMapBase>(): ActionDispatcher<EventMap> {
-    const source = new ReplaySubject<ActionUnion<EventMap>>();
+    const source = new Subject<ActionUnion<EventMap>>();
     const source$ = source.asObservable();
 
     return {
